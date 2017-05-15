@@ -18,6 +18,8 @@ namespace SGCommander
 {
     public partial class Form1 : Form
     {
+        private int indexOfItemUnderMouseToDrag;
+        private Rectangle dragBoxFromMouseDown;
         Settings set = null;
         public Form1()
         {
@@ -57,15 +59,22 @@ namespace SGCommander
                 case 7: listView2.Columns[3].Text = "↑Дата"; break;
                 default: break;
             }
-            list_l.Add(@"C:\"); list_r.Add(@"C:\");
-            SetDir(Program.active_dir(list_l), listView1, set);
-            SetDir(Program.active_dir(list_r), listView2, set);
-            splitContainer1.SplitterDistance = splitContainer1.Width / 2;
 
+            splitContainer1.SplitterDistance = splitContainer1.Width / 2;
             comboBox1.Items.AddRange(logicDriver);
             comboBox2.Items.AddRange(logicDriver);
-            comboBox1.SelectedIndex = 0;
-            comboBox2.SelectedIndex = 0;
+            for (int i = 0; i < logicDriver.Length; i++ )
+            {
+                if(logicDriver[i].IsReady)
+                {
+                    comboBox1.SelectedIndex = i;
+                    comboBox2.SelectedIndex = i;
+                    list_l.Add(logicDriver[i].RootDirectory.ToString()); list_r.Add(logicDriver[i].RootDirectory.ToString());
+                    break;
+                }
+            }
+            SetDir(Program.active_dir(list_l), listView1, set);
+            SetDir(Program.active_dir(list_r), listView2, set);
             comboBox1.SelectedIndexChanged += new System.EventHandler(comboBox1_SelectedIndexChanged);
             comboBox2.SelectedIndexChanged += new System.EventHandler(comboBox2_SelectedIndexChanged);
             driverButton = new Button[logicDriver.Length * 2];
@@ -320,64 +329,6 @@ namespace SGCommander
             label3.Text = Program.active_dir(list_l);
             listView2.Items[0].Focused = true;
             listView2.Items[0].Selected = true;
-        }
-
-        private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            int index = listView1.FocusedItem.Index;
-            if (index == 0)
-            {
-                if (list_l.Count > 1)
-                {
-                    DirectoryInfo dir1 = new DirectoryInfo(Program.active_dir(list_l));
-                    dir1 = dir1.Parent;
-                    list_l.RemoveAt(list_l.Count - 1);
-                }
-                SetDir(Program.active_dir(list_l), listView1, set);
-            }
-            else
-            {
-                if (Path.HasExtension(setListDir1[index - 1].FullName))
-                {
-                    Process.Start(setListDir1[index - 1].FullName);
-                }
-                else
-                {
-                    list_l.Add(listView1.Items[index].SubItems[0].Text);
-                    SetDir(Program.active_dir(list_l), listView1, set);
-                }
-            }
-            toolStripStatusLabel1.Text = Program.active_dir(list_l);
-            label3.Text = Program.active_dir(list_l);
-        }
-
-        private void listView2_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            int index = listView2.FocusedItem.Index;
-            if (index == 0)
-            {
-                if (list_r.Count > 1)
-                {
-                    DirectoryInfo dir1 = new DirectoryInfo(Program.active_dir(list_r));
-                    dir1 = dir1.Parent;
-                    list_r.RemoveAt(list_r.Count - 1);
-                }
-                SetDir(Program.active_dir(list_r), listView2, set);
-            }
-            else
-            {
-                if (Path.HasExtension(setListDir2[index - 1].FullName))
-                {
-                    Process.Start(setListDir2[index - 1].FullName);
-                }
-                else
-                {
-                    list_r.Add(listView2.Items[index].SubItems[0].Text);
-                    SetDir(Program.active_dir(list_r), listView2, set);
-                }
-            }
-            toolStripStatusLabel1.Text = Program.active_dir(list_r);
-            label4.Text = Program.active_dir(list_r);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -648,18 +599,6 @@ namespace SGCommander
             return;
         }
 
-        private void listView1_MouseClick(object sender, MouseEventArgs e)
-        {
-            active_listView = 1;
-            button_reset(set.list1_view);
-        }
-
-        private void listView2_MouseClick(object sender, MouseEventArgs e)
-        {
-            active_listView = 2;
-            button_reset(set.list2_view);
-        }
-
         private void button_reset(System.Windows.Forms.View list_view)
         {
             toolStripButton2.Checked = toolStripButton3.Checked = toolStripButton4.Checked = false;
@@ -799,23 +738,15 @@ namespace SGCommander
 
         private void сохранитьПозициюToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
             set.Column_name = columnHeader1.Width;
             set.Column_type = columnHeader2.Width;
             set.Column_size = columnHeader3.Width;
             set.Column_date = columnHeader4.Width;
             set.Column_attributes = columnHeader5.Width;
-            //set.Show_hidden_elem = false;
             FileStream fs = new FileStream("settings.xml", FileMode.Create, FileAccess.ReadWrite);
-            //XmlSerializer formatter = new XmlSerializer(typeof(Program.Settings));
             SoapFormatter formatter = new SoapFormatter();
             formatter.Serialize(fs, set);
             fs.Close();
-        }
-
-        public void setMark()
-        {
-
         }
 
         void CopyDir(string dir_on, string dir_to)
@@ -889,26 +820,6 @@ namespace SGCommander
 
                 }
             }
-        }
-
-        private void listView2_DragDrop(object sender, DragEventArgs e)
-        {
-            MessageBox.Show("kjhlkjh");
-        }
-
-        private void listView1_ItemDrag(object sender, ItemDragEventArgs e)
-        {
-            //MessageBox.Show("kjhlkjh");// begin
-        }
-
-        private void listView2_MouseUp(object sender, MouseEventArgs e)
-        {
-            MessageBox.Show("kjhlkjh");
-        }
-
-        private void listView1_MouseUp(object sender, MouseEventArgs e)
-        {
-            //button3_Click(sender, e);
         }
 
         private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -1006,13 +917,11 @@ namespace SGCommander
                 {
                     listView1.View = View.Details;
                     set.list1_view = View.Details;
-
                 }
                 else
                 {
                     listView2.View = View.Details;
                     set.list2_view = View.Details;
-
                 }
 
             }
@@ -1033,7 +942,6 @@ namespace SGCommander
                 {
                     listView2.View = View.List;
                     set.list2_view = View.List;
-
                 }
 
             }
@@ -1054,7 +962,6 @@ namespace SGCommander
                 {
                     listView2.View = View.Tile;
                     set.list2_view = View.Tile;
-
                 }
 
             }
@@ -1067,9 +974,7 @@ namespace SGCommander
             set.Column_size = columnHeader3.Width;
             set.Column_date = columnHeader4.Width;
             set.Column_attributes = columnHeader5.Width;
-            //set.Show_hidden_elem = false;
             FileStream fs = new FileStream("settings.xml", FileMode.Create, FileAccess.ReadWrite);
-            //XmlSerializer formatter = new XmlSerializer(typeof(Program.Settings));
             SoapFormatter formatter = new SoapFormatter();
             formatter.Serialize(fs, set);
             fs.Close();
@@ -1088,11 +993,6 @@ namespace SGCommander
         private void notifyIcon1_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Normal;
-        }
-
-        private void listView1_DragDrop(object sender, DragEventArgs e)
-        {
-            MessageBox.Show("kjhlkjh");
         }
 
         private void сравнитьКаталогиToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1127,6 +1027,200 @@ namespace SGCommander
             }
         }
 
+        private void listView1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Clicks == 2)
+            {
+                indexOfItemUnderMouseToDrag = listView1.FocusedItem.Index;
+                if (indexOfItemUnderMouseToDrag != null)
+                {
+                    Size dragSize = SystemInformation.DragSize;
+                    dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
+                }
+                else
+                    // Reset the rectangle if the mouse is not over an item in the ListBox.
+                    dragBoxFromMouseDown = Rectangle.Empty;
+
+                if (indexOfItemUnderMouseToDrag == 0)
+                {
+                    if (list_l.Count > 1)
+                    {
+                        DirectoryInfo dir1 = new DirectoryInfo(Program.active_dir(list_l));
+                        dir1 = dir1.Parent;
+                        list_l.RemoveAt(list_l.Count - 1);
+                    }
+                    SetDir(Program.active_dir(list_l), listView1, set);
+                }
+                else
+                {
+                    if (Path.HasExtension(setListDir1[indexOfItemUnderMouseToDrag - 1].FullName))
+                    {
+                        Process.Start(setListDir1[indexOfItemUnderMouseToDrag - 1].FullName);
+                    }
+                    else
+                    {
+                        list_l.Add(listView1.Items[indexOfItemUnderMouseToDrag].SubItems[0].Text);
+                        SetDir(Program.active_dir(list_l), listView1, set);
+                    }
+                }
+                toolStripStatusLabel1.Text = Program.active_dir(list_l);
+                label3.Text = Program.active_dir(list_l);
+            }
+            else
+            {
+                active_listView = 1;
+                button_reset(set.list1_view);
+            }
+        }
+
+        private void listView1_MouseUp(object sender, MouseEventArgs e)
+        {
+            dragBoxFromMouseDown = Rectangle.Empty;
+        }
+
+        private void listView1_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+            {
+                if (dragBoxFromMouseDown != Rectangle.Empty &&
+                    !dragBoxFromMouseDown.Contains(e.X, e.Y))
+                {
+                    int index = listView1.FocusedItem.Index;
+                    if (list_action.Count == 0)
+                        list_action.Add(setListDir1[index - 1].Name);
+                    DragDropEffects dropEffect = listView1.DoDragDrop(list_action, DragDropEffects.All | DragDropEffects.Link);
+                }
+            }
+        }
+
+        private void listView1_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Effect == DragDropEffects.Copy)
+                button3_Click(sender, e);
+            if (e.Effect == DragDropEffects.Move)
+                button4_Click(sender, e);
+        }
+
+        private void listView_DragOver(object sender, DragEventArgs e)
+        {
+            if ((e.KeyState & (8 + 32)) == (8 + 32) &&
+                (e.AllowedEffect & DragDropEffects.Link) == DragDropEffects.Link)
+            {
+                // KeyState 8 + 32 = CTL + ALT
+
+                // Link drag-and-drop effect.
+                e.Effect = DragDropEffects.Link;
+
+            }
+            else if ((e.KeyState & 32) == 32 &&
+              (e.AllowedEffect & DragDropEffects.Link) == DragDropEffects.Link)
+            {
+
+                // ALT KeyState for link.
+                e.Effect = DragDropEffects.Link;
+
+            }
+            else if ((e.KeyState & 4) == 4 &&
+              (e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move)
+            {
+
+                // SHIFT KeyState for move.
+                e.Effect = DragDropEffects.Move;
+
+            }
+            else if ((e.KeyState & 8) == 8 &&
+              (e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy)
+            {
+
+                // CTL KeyState for copy.
+                e.Effect = DragDropEffects.Copy;
+
+            }
+            else if ((e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move)
+            {
+
+                // By default, the drop action should be move, if allowed.
+                e.Effect = DragDropEffects.Move;
+
+            }
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+
+        private void listView2_DragDrop(object sender, DragEventArgs e)
+        {
+            if(e.Effect == DragDropEffects.Copy)
+                button3_Click(sender, e);
+            if(e.Effect == DragDropEffects.Move)
+                button4_Click(sender, e);
+        }
+
+        private void listView2_MouseUp(object sender, MouseEventArgs e)
+        {
+            dragBoxFromMouseDown = Rectangle.Empty;
+        }
+
+        private void listView2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Clicks == 2)
+            {
+                indexOfItemUnderMouseToDrag = listView2.FocusedItem.Index;
+                if (indexOfItemUnderMouseToDrag != null)
+                {
+                    Size dragSize = SystemInformation.DragSize;
+                    dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
+                }
+                else
+                    dragBoxFromMouseDown = Rectangle.Empty;
+
+                if (indexOfItemUnderMouseToDrag == 0)
+                {
+                    if (list_r.Count > 1)
+                    {
+                        DirectoryInfo dir1 = new DirectoryInfo(Program.active_dir(list_r));
+                        dir1 = dir1.Parent;
+                        list_r.RemoveAt(list_r.Count - 1);
+                    }
+                    SetDir(Program.active_dir(list_r), listView2, set);
+                }
+                else
+                {
+                    if (Path.HasExtension(setListDir2[indexOfItemUnderMouseToDrag - 1].FullName))
+                    {
+                        Process.Start(setListDir2[indexOfItemUnderMouseToDrag - 1].FullName);
+                    }
+                    else
+                    {
+                        list_r.Add(listView2.Items[indexOfItemUnderMouseToDrag].SubItems[0].Text);
+                        SetDir(Program.active_dir(list_r), listView2, set);
+                    }
+                }
+                toolStripStatusLabel1.Text = Program.active_dir(list_r);
+                label4.Text = Program.active_dir(list_r);
+            }
+            else
+            {
+                active_listView = 2;
+                button_reset(set.list2_view);
+            }
+        }
+
+        private void listView2_MouseMove(object sender, MouseEventArgs e)
+        {
+            if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+            {
+                if (dragBoxFromMouseDown != Rectangle.Empty &&
+                    !dragBoxFromMouseDown.Contains(e.X, e.Y))
+                {
+                    int index = listView2.FocusedItem.Index;
+                    if (list_action.Count == 0)
+                        list_action.Add(setListDir2[index - 1].Name);
+                    DragDropEffects dropEffect = listView2.DoDragDrop(list_action, DragDropEffects.All | DragDropEffects.Link);
+                }
+            }
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]

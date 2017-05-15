@@ -119,18 +119,18 @@ namespace SGCommander
             this.listView1.Location = new System.Drawing.Point(0, 69);
             this.listView1.Margin = new System.Windows.Forms.Padding(0);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(541, 419);
+            this.listView1.Size = new System.Drawing.Size(541, 417);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 0;
             this.listView1.Tag = "1";
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
             this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
-            this.listView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
             this.listView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView1_DragDrop);
+            this.listView1.DragOver += new System.Windows.Forms.DragEventHandler(this.listView_DragOver);
             this.listView1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listView1_KeyUp);
-            this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
-            this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
+            this.listView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDown);
+            this.listView1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseMove);
             // 
             // columnHeader1
             // 
@@ -186,14 +186,14 @@ namespace SGCommander
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(0, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1088, 21);
+            this.menuStrip1.Size = new System.Drawing.Size(1088, 23);
             this.menuStrip1.TabIndex = 3;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // файлыToolStripMenuItem
             // 
             this.файлыToolStripMenuItem.Name = "файлыToolStripMenuItem";
-            this.файлыToolStripMenuItem.Size = new System.Drawing.Size(53, 17);
+            this.файлыToolStripMenuItem.Size = new System.Drawing.Size(57, 19);
             this.файлыToolStripMenuItem.Text = "Файлы";
             // 
             // комаедыToolStripMenuItem
@@ -201,13 +201,13 @@ namespace SGCommander
             this.комаедыToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.сравнитьКаталогиToolStripMenuItem});
             this.комаедыToolStripMenuItem.Name = "комаедыToolStripMenuItem";
-            this.комаедыToolStripMenuItem.Size = new System.Drawing.Size(65, 17);
+            this.комаедыToolStripMenuItem.Size = new System.Drawing.Size(70, 19);
             this.комаедыToolStripMenuItem.Text = "Команды";
             // 
             // сравнитьКаталогиToolStripMenuItem
             // 
             this.сравнитьКаталогиToolStripMenuItem.Name = "сравнитьКаталогиToolStripMenuItem";
-            this.сравнитьКаталогиToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.сравнитьКаталогиToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.сравнитьКаталогиToolStripMenuItem.Text = "Сравнить каталоги";
             this.сравнитьКаталогиToolStripMenuItem.Click += new System.EventHandler(this.сравнитьКаталогиToolStripMenuItem_Click);
             // 
@@ -217,20 +217,20 @@ namespace SGCommander
             this.настройкаToolStripMenuItem,
             this.сохранитьПозициюToolStripMenuItem});
             this.конфигурацияToolStripMenuItem.Name = "конфигурацияToolStripMenuItem";
-            this.конфигурацияToolStripMenuItem.Size = new System.Drawing.Size(93, 17);
+            this.конфигурацияToolStripMenuItem.Size = new System.Drawing.Size(100, 19);
             this.конфигурацияToolStripMenuItem.Text = "Конфигурация";
             // 
             // настройкаToolStripMenuItem
             // 
             this.настройкаToolStripMenuItem.Name = "настройкаToolStripMenuItem";
-            this.настройкаToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.настройкаToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.настройкаToolStripMenuItem.Text = "Настройка";
             this.настройкаToolStripMenuItem.Click += new System.EventHandler(this.настройкаToolStripMenuItem_Click);
             // 
             // сохранитьПозициюToolStripMenuItem
             // 
             this.сохранитьПозициюToolStripMenuItem.Name = "сохранитьПозициюToolStripMenuItem";
-            this.сохранитьПозициюToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.сохранитьПозициюToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.сохранитьПозициюToolStripMenuItem.Text = "Сохранить позицию";
             this.сохранитьПозициюToolStripMenuItem.Click += new System.EventHandler(this.сохранитьПозициюToolStripMenuItem_Click);
             // 
@@ -248,7 +248,7 @@ namespace SGCommander
             this.toolStripSeparator1,
             this.toolStripButton5});
             this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-            this.toolStrip1.Location = new System.Drawing.Point(0, 21);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 23);
             this.toolStrip1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 2);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
@@ -364,7 +364,7 @@ namespace SGCommander
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel3);
-            this.splitContainer1.Size = new System.Drawing.Size(1088, 508);
+            this.splitContainer1.Size = new System.Drawing.Size(1088, 506);
             this.splitContainer1.SplitterDistance = 541;
             this.splitContainer1.TabIndex = 6;
             // 
@@ -388,7 +388,7 @@ namespace SGCommander
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(541, 508);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(541, 506);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // panel1
@@ -407,7 +407,7 @@ namespace SGCommander
             this.label1.BackColor = System.Drawing.Color.Lavender;
             this.label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(0, 488);
+            this.label1.Location = new System.Drawing.Point(0, 486);
             this.label1.Margin = new System.Windows.Forms.Padding(0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(541, 20);
@@ -468,7 +468,7 @@ namespace SGCommander
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(543, 508);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(543, 506);
             this.tableLayoutPanel3.TabIndex = 2;
             // 
             // listView2
@@ -490,7 +490,7 @@ namespace SGCommander
             this.listView2.Location = new System.Drawing.Point(0, 69);
             this.listView2.Margin = new System.Windows.Forms.Padding(0);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(543, 419);
+            this.listView2.Size = new System.Drawing.Size(543, 417);
             this.listView2.SmallImageList = this.imageList1;
             this.listView2.TabIndex = 1;
             this.listView2.Tag = "2";
@@ -498,9 +498,11 @@ namespace SGCommander
             this.listView2.View = System.Windows.Forms.View.Details;
             this.listView2.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView2_ColumnClick);
             this.listView2.SelectedIndexChanged += new System.EventHandler(this.listView2_SelectedIndexChanged);
+            this.listView2.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView2_DragDrop);
+            this.listView2.DragOver += new System.Windows.Forms.DragEventHandler(this.listView_DragOver);
             this.listView2.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listView2_KeyUp);
-            this.listView2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView2_MouseClick);
-            this.listView2.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView2_MouseDoubleClick);
+            this.listView2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listView2_MouseDown);
+            this.listView2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listView2_MouseMove);
             // 
             // columnHeader6
             // 
@@ -544,7 +546,7 @@ namespace SGCommander
             this.label2.AutoSize = true;
             this.label2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Location = new System.Drawing.Point(0, 488);
+            this.label2.Location = new System.Drawing.Point(0, 486);
             this.label2.Margin = new System.Windows.Forms.Padding(0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(543, 20);
@@ -602,7 +604,7 @@ namespace SGCommander
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(109, 27);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 27);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
             // statusStrip1
@@ -619,7 +621,7 @@ namespace SGCommander
             // button1
             // 
             this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button1.Location = new System.Drawing.Point(3, 511);
+            this.button1.Location = new System.Drawing.Point(3, 509);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(130, 24);
             this.button1.TabIndex = 9;
@@ -630,7 +632,7 @@ namespace SGCommander
             // button2
             // 
             this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button2.Location = new System.Drawing.Point(139, 511);
+            this.button2.Location = new System.Drawing.Point(139, 509);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(130, 24);
             this.button2.TabIndex = 10;
@@ -641,7 +643,7 @@ namespace SGCommander
             // button4
             // 
             this.button4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button4.Location = new System.Drawing.Point(411, 511);
+            this.button4.Location = new System.Drawing.Point(411, 509);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(130, 24);
             this.button4.TabIndex = 12;
@@ -652,7 +654,7 @@ namespace SGCommander
             // button5
             // 
             this.button5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button5.Location = new System.Drawing.Point(547, 511);
+            this.button5.Location = new System.Drawing.Point(547, 509);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(130, 24);
             this.button5.TabIndex = 13;
@@ -664,7 +666,7 @@ namespace SGCommander
             // 
             this.button6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button6.ImageIndex = 3;
-            this.button6.Location = new System.Drawing.Point(683, 511);
+            this.button6.Location = new System.Drawing.Point(683, 509);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(130, 24);
             this.button6.TabIndex = 14;
@@ -676,7 +678,7 @@ namespace SGCommander
             // button7
             // 
             this.button7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button7.Location = new System.Drawing.Point(819, 511);
+            this.button7.Location = new System.Drawing.Point(819, 509);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(130, 24);
             this.button7.TabIndex = 15;
@@ -707,19 +709,19 @@ namespace SGCommander
             this.tableLayoutPanel1.Controls.Add(this.button8, 7, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 47);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 49);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1088, 538);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1088, 536);
             this.tableLayoutPanel1.TabIndex = 16;
             // 
             // button3
             // 
             this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button3.Location = new System.Drawing.Point(275, 511);
+            this.button3.Location = new System.Drawing.Point(275, 509);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(130, 24);
             this.button3.TabIndex = 11;
@@ -730,7 +732,7 @@ namespace SGCommander
             // button8
             // 
             this.button8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button8.Location = new System.Drawing.Point(955, 511);
+            this.button8.Location = new System.Drawing.Point(955, 509);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(130, 24);
             this.button8.TabIndex = 16;
