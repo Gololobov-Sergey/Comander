@@ -33,6 +33,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -82,6 +83,14 @@
             this.textBox2.TabIndex = 4;
             this.textBox2.Visible = false;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(12, 104);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(506, 23);
+            this.progressBar1.TabIndex = 5;
+            this.progressBar1.Visible = false;
+            // 
             // Form2
             // 
             this.AcceptButton = this.button1;
@@ -89,6 +98,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button2;
             this.ClientSize = new System.Drawing.Size(530, 180);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button2);
@@ -111,6 +121,7 @@
         private string message;
         private string name;
         private System.Collections.Generic.List<string> list_to;
+        private System.Collections.Generic.List<string> list_on;
         private System.Collections.Generic.List<string> list_action;
         private System.Windows.Forms.ListView listView_to;
         public System.Windows.Forms.ComboBox comboBox1;
@@ -118,5 +129,6 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox textBox1;
         public System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

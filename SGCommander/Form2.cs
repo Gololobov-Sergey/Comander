@@ -17,13 +17,14 @@ namespace SGCommander
         {
             InitializeComponent();
         }
-        public Form2(string message, string name, ListView listView_to, List<string> list_to, int type_form, List<string> list_action)
+        public Form2(string message, string name, ListView listView_to, List<string> list_to, List<string> list_on, int type_form, List<string> list_action)
         {
             InitializeComponent();
             this.message = message;
             this.name = name;
             this.listView_to = listView_to;
             this.list_to = list_to;
+            this.list_on = list_on;
             this.type_form = type_form;
             this.list_action = list_action;
         }
@@ -58,7 +59,37 @@ namespace SGCommander
 
         private void button1_Click(object sender, EventArgs e)
         {
+            progressBar1.Visible = true;
+            string copy_to_name = comboBox1.Text;
+            foreach (var item in list_action)
+            {
+                if (Path.HasExtension(Path.Combine(Program.active_dir(list_on) + item)))
+                {
+                    if (File.Exists(Path.Combine(Program.active_dir(list_on), item)))
+                    {
+                        for (int i = 0; i < 100000000; i++)
+                        {
+                            progressBar1.Value = i / 1000000;
 
+                        }
+                        //FileInfo f = new FileInfo(Path.Combine(Program.active_dir(list_on), item));
+                        //long len = f.Length;
+                        //StreamReader sr = new StreamReader(Path.Combine(Program.active_dir(list_on), item));
+                        
+                        //FileStream fs = new FileStream(Path.Combine(Program.active_dir(list_on), item),);
+                        //StreamReader read = new StreamReader ()
+
+                        //File.Copy(Path.Combine(Program.active_dir(list_on), item), Path.Combine(copy_to_name, item)); //Program.active_dir(list_to)
+                    }
+                       
+                }
+                else
+                {
+                    if (Directory.Exists(Path.Combine(Program.active_dir(list_to), item)) != true)
+                        Directory.CreateDirectory(Path.Combine(Program.active_dir(list_to), item));
+                    //CopyDir(Path.Combine(Program.active_dir(list_on), item), Path.Combine(copy_to_name, item));
+                }
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)

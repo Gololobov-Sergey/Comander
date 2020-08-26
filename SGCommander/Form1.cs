@@ -164,6 +164,9 @@ namespace SGCommander
                 long file_size = 0;
                 int count_folder = 0;
                 int count_files = 0;
+                int mark_files = 0;
+                int mark_folder = 0;
+                long mark_size = 0;
                 List.Items.Clear();
                 List<FileSystemInfo> dirFolder = new List<FileSystemInfo>();
                 ListViewItem list1 = new ListViewItem("[..]");
@@ -222,18 +225,8 @@ namespace SGCommander
                     list1.SubItems.Add(item.Attributes.ToString());
                     List.Items.Add(list1);
                 }
-                string tmp_label = "0 is " + (int)(file_size / 1000) + " Kb, 0 is " + count_folder + " folder, 0 is " + count_files + " files";
-                if ((string)List.Tag == "1")
-                {
-                    label1.Text = tmp_label;
-                    label3.Text = Program.active_dir(list_l);
-                }
+                setLabelText(setListDir1, List);
 
-                else
-                {
-                    label2.Text = tmp_label;
-                    label4.Text = Program.active_dir(list_r);
-                }
 
             }
             catch (Exception e)
@@ -404,25 +397,26 @@ namespace SGCommander
             else
                 copy_name = list_action.Count.ToString() + @" файла\папки";
 
-            Form2 form2 = new Form2("Копировать ", copy_name, listView_to, list_to, 1, list_action);
+            Form2 form2 = new Form2("Копировать ", copy_name, listView_to, list_to, list_on, 1, list_action);
             string copy_to_name = null;
             if (form2.ShowDialog() == DialogResult.Yes)
             {
-                copy_to_name = form2.comboBox1.Text;
-                foreach (var item in list_action)
-                {
-                    if (Path.HasExtension(Path.Combine(Program.active_dir(list_on) + item)))
-                    {
-                        if (File.Exists(Path.Combine(Program.active_dir(list_on), item)))
-                            File.Copy(Path.Combine(Program.active_dir(list_on), item), Path.Combine(copy_to_name, item)); //Program.active_dir(list_to)
-                    }
-                    else
-                    {
-                        if (Directory.Exists(Path.Combine(Program.active_dir(list_to), item)) != true)
-                            Directory.CreateDirectory(Path.Combine(Program.active_dir(list_to), item));
-                        CopyDir(Path.Combine(Program.active_dir(list_on), item), Path.Combine(copy_to_name, item));
-                    }
-                }
+
+                //copy_to_name = form2.comboBox1.Text;
+                //foreach (var item in list_action)
+                //{
+                //    if (Path.HasExtension(Path.Combine(Program.active_dir(list_on) + item)))
+                //    {
+                //        if (File.Exists(Path.Combine(Program.active_dir(list_on), item)))
+                //            File.Copy(Path.Combine(Program.active_dir(list_on), item), Path.Combine(copy_to_name, item)); //Program.active_dir(list_to)
+                //    }
+                //    else
+                //    {
+                //        if (Directory.Exists(Path.Combine(Program.active_dir(list_to), item)) != true)
+                //            Directory.CreateDirectory(Path.Combine(Program.active_dir(list_to), item));
+                //        CopyDir(Path.Combine(Program.active_dir(list_on), item), Path.Combine(copy_to_name, item));
+                //    }
+                //}
             }
             list_action.Clear();
             SetDir(Program.active_dir(list_to), listView_to, set);
@@ -459,7 +453,7 @@ namespace SGCommander
             else
                 copy_name = list_action.Count.ToString() + @" файла\папки";
 
-            Form2 form2 = new Form2("Переместить ", copy_name, listView_to, list_to, 1, list_action);
+            Form2 form2 = new Form2("Переместить ", copy_name, listView_to, list_to, list_on, 1, list_action);
             string move_to_name = null;
             if (form2.ShowDialog() == DialogResult.Yes)
             {
@@ -487,6 +481,7 @@ namespace SGCommander
         {
             ListView listView_to = null;
             List<string> list_to = null;
+            List<string> list_on = null;
             if (active_listView == 1)
             {
                 listView_to = listView1;
@@ -497,7 +492,7 @@ namespace SGCommander
                 listView_to = listView2;
                 list_to = list_r;
             }
-            Form2 form2 = new Form2("Создать новый каталог (папку) ", Program.active_dir(list_to), listView_to, list_to, 2, list_action);
+            Form2 form2 = new Form2("Создать новый каталог (папку) ", Program.active_dir(list_to), listView_to, list_to, list_on, 2, list_action);
             if (form2.ShowDialog() == DialogResult.Yes && form2.textBox2.Text != "")
             {
                 Directory.CreateDirectory(Path.Combine(Program.active_dir(list_to), form2.textBox2.Text));
@@ -613,126 +608,158 @@ namespace SGCommander
 
         private void listView1_KeyUp(object sender, KeyEventArgs e)
         {
-
-            switch (e.KeyCode)
+            if (e.Control)
             {
-                case Keys.Enter:
-                    {
-                        int index;
+                switch (e.KeyCode)
+                {
+                    case Keys.A:
+                        for (int i = 0; i <  setListDir1.Count; i++)
+                        {
+                            listView1.Items[i+1].ForeColor = Color.Red;
+                            list_action.Add(setListDir1[i].Name);
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Enter:
+                        {
+                            int index;
 
-                        try
-                        {
-                            index = listView1.FocusedItem.Index;
-                        }
-                        catch (Exception ex)
-                        {
-                            index = 0;
-                        }
-                        if (index == 0)
-                        {
-                            if (list_l.Count > 1)
+                            try
                             {
-                                DirectoryInfo dir1 = new DirectoryInfo(Program.active_dir(list_l));
-                                dir1 = dir1.Parent;
-                                list_l.RemoveAt(list_l.Count - 1);
+                                index = listView1.FocusedItem.Index;
                             }
-                            SetDir(Program.active_dir(list_l), listView1, set);
-                        }
-                        else
-                        {
-                            if (Path.HasExtension(setListDir1[index - 1].FullName))
+                            catch (Exception ex)
                             {
-                                Process.Start(setListDir1[index - 1].FullName);
+                                index = 0;
+                            }
+                            if (index == 0)
+                            {
+                                if (list_l.Count > 1)
+                                {
+                                    DirectoryInfo dir1 = new DirectoryInfo(Program.active_dir(list_l));
+                                    dir1 = dir1.Parent;
+                                    list_l.RemoveAt(list_l.Count - 1);
+                                    list_action.Clear();
+                                }
+                                SetDir(Program.active_dir(list_l), listView1, set);
                             }
                             else
                             {
-                                list_l.Add(listView1.Items[index].SubItems[0].Text);
-                                SetDir(Program.active_dir(list_l), listView1, set);
+                                if (Path.HasExtension(setListDir1[index - 1].FullName))
+                                {
+                                    Process.Start(setListDir1[index - 1].FullName);
+                                }
+                                else
+                                {
+                                    list_l.Add(listView1.Items[index].SubItems[0].Text);
+                                    SetDir(Program.active_dir(list_l), listView1, set);
+                                }
                             }
+                            toolStripStatusLabel1.Text = Program.active_dir(list_l);
+                            label3.Text = Program.active_dir(list_l);
+                            break;
                         }
-                        toolStripStatusLabel1.Text = Program.active_dir(list_l);
-                        label3.Text = Program.active_dir(list_l);
-                        break;
-                    }
-                case Keys.Space:
-                    {
-                        int index = listView1.FocusedItem.Index;
-                        if (listView1.Items[index].ForeColor != Color.Red)
+                    case Keys.Space:
                         {
-                            listView1.Items[index].ForeColor = Color.Red;
-                            List<FileSystemInfo> dirFolder = new List<FileSystemInfo>();
-                            dirFolder = setListDir(Program.active_dir(list_l), listView1, set);
-                            list_action.Add(dirFolder[index - 1].Name);
+                            int index = listView1.FocusedItem.Index;
+                            if (listView1.Items[index].ForeColor != Color.Red)
+                            {
+                                listView1.Items[index].ForeColor = Color.Red;
+                                list_action.Add(setListDir1[index - 1].Name);
+                            }
+                            else
+                            {
+                                list_action.Remove(setListDir1[index - 1].Name);
+                                listView1.Items[index].ForeColor = Color.Black;
+                            }
+                            setLabelText(setListDir1, listView1);
+                            break;
                         }
-                        else
-                        {
-                            listView1.Items[index].ForeColor = Color.Black;
-                        }
-                        break;
-                    }
+                    //case Keys.ControlKey + 
+                }
             }
         }
 
         private void listView2_KeyUp(object sender, KeyEventArgs e)
         {
-
-            switch (e.KeyCode)
+            if (e.Control)
             {
-                case Keys.Enter:
-                    {
-                        int index;
-
-                        try
+                switch (e.KeyCode)
+                {
+                    case Keys.A:
+                        for (int i = 0; i < setListDir1.Count; i++)
                         {
-                            index = listView2.FocusedItem.Index;
+                            listView1.Items[i + 1].ForeColor = Color.Red;
+                            list_action.Add(setListDir1[i].Name);
                         }
-                        catch (Exception ex)
+                        break;
+                }
+            }
+            else
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Enter:
                         {
-                            index = 0;
-                        }
+                            int index;
 
-                        if (index == 0)
-                        {
-                            if (list_r.Count > 1)
+                            try
                             {
-                                DirectoryInfo dir1 = new DirectoryInfo(Program.active_dir(list_r));
-                                dir1 = dir1.Parent;
-                                list_r.RemoveAt(list_r.Count - 1);
+                                index = listView2.FocusedItem.Index;
                             }
-                            SetDir(Program.active_dir(list_r), listView2, set);
-                        }
-                        else
-                        {
-                            if (Path.HasExtension(setListDir2[index - 1].FullName))
+                            catch (Exception ex)
                             {
-                                Process.Start(setListDir2[index - 1].FullName);
+                                index = 0;
+                            }
+
+                            if (index == 0)
+                            {
+                                if (list_r.Count > 1)
+                                {
+                                    DirectoryInfo dir1 = new DirectoryInfo(Program.active_dir(list_r));
+                                    dir1 = dir1.Parent;
+                                    list_r.RemoveAt(list_r.Count - 1);
+                                    list_action.Clear();
+                                }
+                                SetDir(Program.active_dir(list_r), listView2, set);
                             }
                             else
                             {
-                                list_r.Add(listView2.Items[index].SubItems[0].Text);
-                                SetDir(Program.active_dir(list_r), listView2, set);
+                                if (Path.HasExtension(setListDir2[index - 1].FullName))
+                                {
+                                    Process.Start(setListDir2[index - 1].FullName);
+                                }
+                                else
+                                {
+                                    list_r.Add(listView2.Items[index].SubItems[0].Text);
+                                    SetDir(Program.active_dir(list_r), listView2, set);
+                                }
                             }
+                            toolStripStatusLabel1.Text = Program.active_dir(list_r);
+                            label4.Text = Program.active_dir(list_r);
+                            break;
                         }
-                        toolStripStatusLabel1.Text = Program.active_dir(list_r);
-                        label4.Text = Program.active_dir(list_r);
-                        break;
-                    }
-                case Keys.Space:
-                    {
-                        int index = listView2.FocusedItem.Index;
-                        if (listView2.Items[index].ForeColor != Color.Red)
+                    case Keys.Space:
                         {
-                            listView2.Items[index].ForeColor = Color.Red;
-                            List<FileSystemInfo> dirFolder = new List<FileSystemInfo>();
-                            dirFolder = setListDir(Program.active_dir(list_r), listView2, set);
-                            list_action.Add(dirFolder[index - 1].Name);
+                            int index = listView2.FocusedItem.Index;
+                            if (listView2.Items[index].ForeColor != Color.Red)
+                            {
+                                listView2.Items[index].ForeColor = Color.Red;
+                                list_action.Add(setListDir2[index - 1].Name);
+                            }
+                            else
+                            {
+                                list_action.Remove(setListDir2[index - 1].Name);
+                                listView2.Items[index].ForeColor = Color.Black;
+                            }
+                            break;
                         }
-                        else
-                        {
-                            listView2.Items[index].ForeColor = Color.Black;
-                        }
-                        break;
-                    }
+                }
             }
         }
 
@@ -1048,6 +1075,7 @@ namespace SGCommander
                         DirectoryInfo dir1 = new DirectoryInfo(Program.active_dir(list_l));
                         dir1 = dir1.Parent;
                         list_l.RemoveAt(list_l.Count - 1);
+                        list_action.Clear();
                     }
                     SetDir(Program.active_dir(list_l), listView1, set);
                 }
@@ -1182,6 +1210,7 @@ namespace SGCommander
                         DirectoryInfo dir1 = new DirectoryInfo(Program.active_dir(list_r));
                         dir1 = dir1.Parent;
                         list_r.RemoveAt(list_r.Count - 1);
+                        list_action.Clear();
                     }
                     SetDir(Program.active_dir(list_r), listView2, set);
                 }
@@ -1219,6 +1248,59 @@ namespace SGCommander
                         list_action.Add(setListDir2[index - 1].Name);
                     DragDropEffects dropEffect = listView2.DoDragDrop(list_action, DragDropEffects.All | DragDropEffects.Link);
                 }
+            }
+        }
+
+        private void setLabelText(List<FileSystemInfo> setListDir, ListView List)
+        {
+            long file_size = 0;
+            int count_folder = 0;
+            int count_files = 0;
+            int mark_files = 0;
+            int mark_folder = 0;
+            long mark_size = 0;
+
+            foreach (var item in setListDir)
+            {
+                if (item is FileInfo)
+                {
+                    file_size += ((FileInfo)item).Length;
+                    count_files++;
+                }
+                else
+                {
+                    count_folder++;
+                }
+            }
+
+            for (int i = 0; i < list_action.Count; i++ )
+            {
+                
+                foreach (var item in setListDir)
+                {
+                    if(list_action[i] == item.Name && item.Extension != "")
+                    {
+                        mark_size += ((FileInfo)item).Length;
+                        mark_files++;
+                    }
+                    if (list_action[i] == item.Name && item.Extension == "")
+                    {
+                        
+                        mark_folder++;
+                    }
+                }
+            }
+            string tmp_label = mark_size + " is " + file_size + " Kb, " + mark_folder + " is " + count_folder + " folder, " + mark_files + " is " + count_files + " files";
+            if ((string)List.Tag == "1")
+            {
+                label1.Text = tmp_label;
+                label3.Text = Program.active_dir(list_l);
+            }
+
+            else
+            {
+                label2.Text = tmp_label;
+                label4.Text = Program.active_dir(list_r);
             }
         }
     }
